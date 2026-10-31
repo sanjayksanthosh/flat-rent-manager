@@ -25,8 +25,8 @@ Other behaviour:
 - Usernames are case-insensitive (`Admin` == `admin`).
 - Passwords: anything the admin types — no length or complexity rules. Only a
   completely blank password is refused.
-- No lockout: a wrong password can be retried any number of times.
-  `failed_attempts` is recorded for diagnostics but never blocks a sign-in.
+- 5 consecutive wrong passwords lock the account for 5 minutes. Once the lock
+  expires the counter restarts, so you get 5 fresh attempts.
 - Sessions last 7 days and slide forward while in use.
 - Changing a password signs every other device out.
 - `app_users` and `app_sessions` are not readable through the REST API at all.

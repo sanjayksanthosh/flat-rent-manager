@@ -194,8 +194,9 @@ security definer
 set search_path = public, extensions, pg_temp
 as $$
 declare
-  v_user  public.app_users;
-  v_token text;
+  v_user     public.app_users;
+  v_token    text;
+  v_attempts integer;
 begin
   if p_username is null or p_password is null or length(trim(p_username)) = 0 then
     return jsonb_build_object(
@@ -219,6 +220,16 @@ begin
       'error', 'Invalid username or password');
   end if;
 
+  -- Five consecutive failures lock the account for 5 minutes.
+  if v_user.locked_until is not null and v_user.locked_until > now() then
+    return jsonb_build_object(
+      'ok', false, 'code', 'locked',
+      'error', 'Too many failed attempts. Try again in '
+               || ceil(extract(epoch from (v_user.locked_until - now())) / 60)::int
+               || ' minute(s).',
+      'lockedUntil', v_user.locked_until);
+  end if;
+
   if not v_user.is_active then
     return jsonb_build_object(
       'ok', false, 'code', 'disabled',
@@ -227,15 +238,29 @@ begin
 
   -- Note: failures return instead of raising so the counter update below is not
   -- rolled back.
-  --
-  -- There is deliberately no lockout: a wrong password can be retried any
-  -- number of times. failed_attempts is a diagnostic counter only and never
-  -- blocks a sign-in.
   if v_user.password_hash <> extensions.crypt(p_password, v_user.password_hash) then
+    -- An expired lock starts a fresh run of attempts, so the user gets another
+    -- five tries instead of being locked again on the very next mistake.
+    v_attempts := case
+                    when v_user.locked_until is not null and v_user.locked_until <= now()
+                    then 1
+                    else v_user.failed_attempts + 1
+                  end;
+
     update public.app_users
-       set failed_attempts = failed_attempts + 1,
+       set failed_attempts = v_attempts,
+           locked_until = case when v_attempts >= 5
+                               then now() + interval '5 minutes'
+                               else null
+                          end,
            updated_at = now()
      where id = v_user.id;
+
+    if v_attempts >= 5 then
+      return jsonb_build_object(
+        'ok', false, 'code', 'locked',
+        'error', 'Too many failed attempts. This account is locked for 5 minutes.');
+    end if;
 
     return jsonb_build_object(
       'ok', false, 'code', 'invalid_credentials',
