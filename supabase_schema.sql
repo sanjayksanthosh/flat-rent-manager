@@ -208,38 +208,23 @@ begin
       'error', 'Invalid username or password');
   end if;
 
-  if v_user.locked_until is not null and v_user.locked_until > now() then
-    return jsonb_build_object(
-      'ok', false, 'code', 'locked',
-      'error', 'Too many failed attempts. Try again after '
-               || to_char(v_user.locked_until at time zone 'UTC', 'YYYY-MM-DD HH24:MI "UTC"'),
-      'lockedUntil', v_user.locked_until);
-  end if;
-
   if not v_user.is_active then
     return jsonb_build_object(
       'ok', false, 'code', 'disabled',
       'error', 'This account has been disabled');
   end if;
 
-  -- Note: failures return instead of raising. An exception would roll back the
-  -- counter update below, which would make the lockout impossible.
+  -- Note: failures return instead of raising so the counter update below is not
+  -- rolled back.
+  --
+  -- There is deliberately no lockout: a wrong password can be retried any
+  -- number of times. failed_attempts is a diagnostic counter only and never
+  -- blocks a sign-in.
   if v_user.password_hash <> extensions.crypt(p_password, v_user.password_hash) then
     update public.app_users
-       set failed_attempts = v_user.failed_attempts + 1,
-           locked_until = case
-                            when v_user.failed_attempts + 1 >= 5
-                            then now() + interval '15 minutes'
-                            else null
-                          end,
+       set failed_attempts = failed_attempts + 1,
            updated_at = now()
      where id = v_user.id;
-
-    if v_user.failed_attempts + 1 >= 5 then
-      return jsonb_build_object(
-        'ok', false, 'code', 'locked',
-        'error', 'Too many failed attempts. This account is locked for 15 minutes.');
-    end if;
 
     return jsonb_build_object(
       'ok', false, 'code', 'invalid_credentials',
