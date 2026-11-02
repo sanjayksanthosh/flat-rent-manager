@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for the app to reach the Supabase REST API. Without this the
+         release build cannot make any network request at all. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="flat_rent_manager"
         android:name="${applicationName}"
