@@ -23,7 +23,7 @@ class DataStore {
   String _k(String key) => '${_namespace}_$key';
 
   void activateForUser(String userId, String username) {
-    _namespace = '$userId';
+    _namespace = userId;
     _buildings = [];
     _flats = [];
     _tenants = [];

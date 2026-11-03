@@ -136,16 +136,18 @@ class _MoveInScreenState extends State<MoveInScreen> {
     super.initState();
     if (widget.buildingId != null && widget.flatId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) setState(() {
-          _buildingId = widget.buildingId;
-          _flatId = widget.flatId;
-          final p = context.read<AppProvider>();
-          final flat = p.getFlat(widget.flatId!);
-          if (flat != null && flat.monthlyRent > 0) {
-            _rentCtrl.text = flat.monthlyRent.toStringAsFixed(0);
-          }
-          _step = 1;
-        });
+        if (mounted) {
+          setState(() {
+            _buildingId = widget.buildingId;
+            _flatId = widget.flatId;
+            final p = context.read<AppProvider>();
+            final flat = p.getFlat(widget.flatId!);
+            if (flat != null && flat.monthlyRent > 0) {
+              _rentCtrl.text = flat.monthlyRent.toStringAsFixed(0);
+            }
+            _step = 1;
+          });
+        }
       });
     }
   }
@@ -284,14 +286,14 @@ class _MoveInScreenState extends State<MoveInScreen> {
   Widget _buildStep1(AppProvider p, List<Flat> vacantFlats) {
     return Column(children: [
       DropdownButtonFormField<int>(
-        value: _buildingId,
+        initialValue: _buildingId,
         decoration: const InputDecoration(labelText: 'Building', prefixIcon: Icon(Icons.business)),
         items: p.buildings.map((b) => DropdownMenuItem(value: b.id, child: Text(b.buildingName))).toList(),
         onChanged: (v) => setState(() { _buildingId = v; _flatId = null; }),
       ),
       const SizedBox(height: 14),
       DropdownButtonFormField<int>(
-        value: _flatId,
+        initialValue: _flatId,
         decoration: const InputDecoration(labelText: 'Vacant Flat', prefixIcon: Icon(Icons.home)),
         items: vacantFlats.map((f) => DropdownMenuItem(value: f.id, child: Text('${f.flatNumber} — Floor ${f.floor} (₹${f.monthlyRent.toStringAsFixed(0)})'))).toList(),
         onChanged: (v) => setState(() => _flatId = v),

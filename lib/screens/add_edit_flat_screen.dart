@@ -70,7 +70,7 @@ class _AddEditFlatScreenState extends State<AddEditFlatScreen> {
         padding: const EdgeInsets.all(20),
         child: R.constrain(context, child: Form(key: _form, child: Column(children: [
           if (!editing) DropdownButtonFormField<int>(
-            value: _buildingId,
+            initialValue: _buildingId,
             decoration: const InputDecoration(labelText: 'Building *', prefixIcon: Icon(Icons.business)),
             items: p.buildings.map((b) => DropdownMenuItem(value: b.id, child: Text(b.buildingName))).toList(),
             onChanged: (v) => setState(() => _buildingId = v),

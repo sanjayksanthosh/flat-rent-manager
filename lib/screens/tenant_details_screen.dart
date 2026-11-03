@@ -85,7 +85,7 @@ class TenantDetailsScreen extends StatelessWidget {
               dense: true, contentPadding: EdgeInsets.zero,
               title: Text('${flatLabel.isNotEmpty ? flatLabel : '-'} · ${bldLabel.isNotEmpty ? bldLabel : '-'}', style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
               subtitle: Text('${l.leaseStart} -> ${l.leaseEnd} ${l.moveOutDate != null ? '(Moved out ${l.moveOutDate})' : '(Active)'}', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-              trailing: Text('${p.rentFor(l).toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.w600)),
+              trailing: Text(p.rentFor(l).toStringAsFixed(0), style: const TextStyle(fontWeight: FontWeight.w600)),
             );
             }).toList()),
           ],

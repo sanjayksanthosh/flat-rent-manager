@@ -63,14 +63,14 @@ class _MoveOutScreenState extends State<MoveOutScreen> {
         padding: const EdgeInsets.all(20),
         child: R.constrain(context, child: Column(children: [
           DropdownButtonFormField<int>(
-            value: _buildingId,
+            initialValue: _buildingId,
             decoration: const InputDecoration(labelText: 'Building', prefixIcon: Icon(Icons.business)),
             items: p.buildings.map((b) => DropdownMenuItem(value: b.id, child: Text(b.buildingName))).toList(),
             onChanged: (v) => setState(() { _buildingId = v; _flatId = null; _activeLease = null; }),
           ),
           const SizedBox(height: 14),
           DropdownButtonFormField<int>(
-            value: _flatId,
+            initialValue: _flatId,
             decoration: const InputDecoration(labelText: 'Occupied Flat', prefixIcon: Icon(Icons.home)),
             items: occupiedFlats.map((f) => DropdownMenuItem(value: f.id, child: Text('${f.flatNumber} — ${f.buildingName ?? ''}'))).toList(),
             onChanged: (v) { setState(() => _flatId = v); _onFlatSelected(); },

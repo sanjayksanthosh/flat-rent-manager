@@ -85,10 +85,12 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
 
   Future<void> _pickDate() async {
     final d = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2030));
-    if (d != null) setState(() {
-      _date = '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-      _dateCtrl.text = _date;
-    });
+    if (d != null) {
+      setState(() {
+        _date = '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+        _dateCtrl.text = _date;
+      });
+    }
   }
 
   void _onFlatSelected() {
@@ -132,7 +134,7 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
         tenantPhone: tenant.phone.isNotEmpty ? tenant.phone : activeLease.tenantPhone,
         flatNumber: flat.flatNumber.isNotEmpty ? flat.flatNumber : activeLease.flatNumber,
         buildingName: building.buildingName.isNotEmpty ? building.buildingName : flat.buildingName,
-        buildingId: building.id != null ? building.id : activeLease.buildingId,
+        buildingId: building.id ?? activeLease.buildingId,
       );
     }
     final now = DateTime.now();
@@ -309,14 +311,14 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
         child: R.constrain(context, child: Column(children: [
           if (widget.leaseId == null) ...[
             DropdownButtonFormField<int>(
-              value: _buildingId,
+              initialValue: _buildingId,
               decoration: const InputDecoration(labelText: 'Select Building', prefixIcon: Icon(Icons.business)),
               items: p.buildings.map((b) => DropdownMenuItem(value: b.id, child: Text(b.buildingName))).toList(),
               onChanged: (v) => setState(() { _buildingId = v; _flatId = null; _leaseId = null; _lease = null; _amountCtrl.clear(); }),
             ),
             const SizedBox(height: 14),
             DropdownButtonFormField<int>(
-              value: _flatId,
+              initialValue: _flatId,
               decoration: const InputDecoration(labelText: 'Select Flat', prefixIcon: Icon(Icons.home)),
               items: p.flats.where((f) => f.buildingId == _buildingId && f.status == 'occupied').map((f) {
                 final activeLease = p.leases.firstWhere(
@@ -346,7 +348,7 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
           Row(children: [
             Expanded(
               child: DropdownButtonFormField<int>(
-                value: _payMonth,
+                initialValue: _payMonth,
                 isExpanded: true,
                 decoration: const InputDecoration(labelText: 'Paying for (month)', prefixIcon: Icon(Icons.event)),
                 items: List.generate(12, (i) => i + 1)
@@ -361,7 +363,7 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: DropdownButtonFormField<int>(
-                value: _payYear,
+                initialValue: _payYear,
                 decoration: const InputDecoration(labelText: 'Year'),
                 items: _yearOptions
                     .map((y) => DropdownMenuItem(value: y, child: Text('$y')))
@@ -379,7 +381,7 @@ class _CollectRentScreenState extends State<CollectRentScreen> {
           TextFormField(controller: _discountCtrl, decoration: const InputDecoration(labelText: 'Discount (₹)', prefixIcon: Icon(Icons.currency_rupee), helperText: 'Deducted from rent — won\'t show as pending'), keyboardType: TextInputType.number),
           const SizedBox(height: 14),
           DropdownButtonFormField<String>(
-            value: _method,
+            initialValue: _method,
             decoration: const InputDecoration(labelText: 'Payment Method', prefixIcon: Icon(Icons.payment)),
             items: ['Cash', 'Bank Transfer', 'Cheque', 'UPI', 'Other'].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
             onChanged: (v) => setState(() => _method = v!),

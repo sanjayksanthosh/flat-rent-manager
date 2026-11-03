@@ -302,7 +302,7 @@ class DocumentViewer extends StatelessWidget {
                     child: Image.memory(
                       bytes,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const Center(child: Text('Cannot display document')),
+                      errorBuilder: (_, _, _) => const Center(child: Text('Cannot display document')),
                     ),
                   ),
                 ),

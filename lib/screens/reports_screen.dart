@@ -228,7 +228,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       pageFormat: PdfPageFormat.a4,
       build: (ctx) => [
         pw.Header(text: 'Monthly Report - $name $_month/$_year'),
-        pw.Table.fromTextArray(
+        pw.TableHelper.fromTextArray(
           headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           data: _csvRows(),
         ),
@@ -514,7 +514,7 @@ class FiltersSection extends StatelessWidget {
         Row(children: [
           Expanded(
             child: DropdownButtonFormField<int?>(
-              value: buildingId,
+              initialValue: buildingId,
               isExpanded: true,
               decoration: const InputDecoration(
                   labelText: 'Building',
@@ -540,7 +540,7 @@ class FiltersSection extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: DropdownButtonFormField<int>(
-              value: month,
+              initialValue: month,
               decoration: const InputDecoration(
                   labelText: 'Month',
                   isDense: true,
@@ -558,7 +558,7 @@ class FiltersSection extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: DropdownButtonFormField<int>(
-              value: year,
+              initialValue: year,
               decoration: const InputDecoration(
                   labelText: 'Year',
                   isDense: true,
@@ -577,7 +577,7 @@ class FiltersSection extends StatelessWidget {
         Row(children: [
           Expanded(
             child: DropdownButtonFormField<String>(
-            value: statusFilter,
+            initialValue: statusFilter,
             decoration: const InputDecoration(
                 labelText: 'Status',
                 isDense: true,

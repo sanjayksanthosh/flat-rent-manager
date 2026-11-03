@@ -3,6 +3,18 @@
 Flutter app for managing buildings, flats, tenants, leases and rent collection,
 backed by Supabase (Postgres + PostgREST).
 
+![Login screen](docs/screenshots/login.png)
+
+## What it does
+
+- Buildings → flats → tenants → leases, with move-in and move-out flows.
+- Rent collection with partial payments, payment history and receipts.
+- Per-tenant ledgers and monthly reports.
+- WhatsApp rent reminders.
+- Admin and user roles, plus user management.
+- Local cache with a pending-operations queue so the UI stays usable when the
+  database is slow.
+
 ## Authentication
 
 The app does **not** use Supabase Auth and does not use email addresses.
@@ -58,4 +70,14 @@ The connection details live in `lib/supabase_config.dart`.
 flutter pub get
 flutter run
 flutter analyze
+flutter test
 ```
+
+The widget and provider tests run without a database:
+
+- `test/login_screen_test.dart` — form rendering, required fields, password visibility.
+- `test/auth_provider_test.dart` — credential validation and signed-out state.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
