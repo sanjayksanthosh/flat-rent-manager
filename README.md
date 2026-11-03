@@ -78,6 +78,13 @@ The widget and provider tests run without a database:
 - `test/login_screen_test.dart` — form rendering, required fields, password visibility.
 - `test/auth_provider_test.dart` — credential validation and signed-out state.
 
+
+## Demo video
+
+<video src="https://raw.githubusercontent.com/sanjayksanthosh/flat-rent-manager/master/docs/video/flat-brag.mp4" poster="https://raw.githubusercontent.com/sanjayksanthosh/flat-rent-manager/master/docs/video/flat-brag.jpg" controls width="100%"></video>
+
+[Download the MP4](docs/video/flat-brag.mp4) · [Poster](docs/video/flat-brag.jpg)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
